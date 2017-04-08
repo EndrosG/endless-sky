@@ -50,6 +50,7 @@ namespace {
 	const string BAY_SIDE[3] = {"inside", "over", "under"};
 	const string BAY_FACING[4] = {"forward", "left", "right", "back"};
 	const Angle BAY_ANGLE[4] = {Angle(0.), Angle(-90.), Angle(90.), Angle(180.)};
+	const string BAY_SEAL[2] = {"intact", "sealed"};
 }
 
 
@@ -154,6 +155,9 @@ void Ship::Load(const DataNode &node)
 				for(unsigned j = 1; j < sizeof(BAY_FACING) / sizeof(BAY_FACING[0]); ++j)
 					if(child.Token(i) == BAY_FACING[j])
 						bays.back().facing = j;
+				for(unsigned j = 1; j < sizeof(BAY_SEAL) / sizeof(BAY_SEAL[0]); ++j)
+					if(child.Token(i) == BAY_SEAL[j])
+						bays.back().isSealed = j;
 			}
 		}
 		else if(child.Token(0) == "explode" && child.Size() >= 2)
@@ -436,14 +440,25 @@ void Ship::Save(DataWriter &out) const
 		{
 			double x = 2. * bay.point.X();
 			double y = 2. * bay.point.Y();
-			if(bay.side && bay.facing)
-				out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SIDE[bay.side], BAY_FACING[bay.facing]);
-			else if(bay.side)
-				out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SIDE[bay.side]);
-			else if(bay.facing)
-				out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_FACING[bay.facing]);
-			else
-				out.Write(BAY_TYPE[bay.isFighter], x, y);
+			if (bay.isSealed) {
+				if(bay.side && bay.facing)
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SIDE[bay.side], BAY_FACING[bay.facing], BAY_SEAL[bay.isSealed]);
+				else if(bay.side)
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SIDE[bay.side], BAY_SEAL[bay.isSealed]);
+				else if(bay.facing)
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_FACING[bay.facing], BAY_SEAL[bay.isSealed]);
+				else
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SEAL[bay.isSealed]);
+			} else {
+				if(bay.side && bay.facing)
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SIDE[bay.side], BAY_FACING[bay.facing]);
+				else if(bay.side)
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_SIDE[bay.side]);
+				else if(bay.facing)
+					out.Write(BAY_TYPE[bay.isFighter], x, y, BAY_FACING[bay.facing]);
+				else
+					out.Write(BAY_TYPE[bay.isFighter], x, y);
+			}
 		}
 		for(const auto &it : explosionEffects)
 			if(it.first && it.second)
