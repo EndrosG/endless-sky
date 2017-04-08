@@ -60,8 +60,8 @@ public:
 		
 		Point point;
 		std::shared_ptr<Ship> ship;
+		bool isSealed = false;
 		bool isFighter = false;
-		bool isLocked = false;
 		
 		uint8_t side = 0;
 		static const uint8_t INSIDE = 0;
