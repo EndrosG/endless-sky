@@ -2093,7 +2093,7 @@ int Ship::BaysFree(bool isFighter) const
 {
 	int count = 0;
 	for(const Bay &bay : bays)
-		count += (bay.isFighter == isFighter) && !bay.ship;
+		count += (bay.isFighter == isFighter) && !bay.ship && !bay.isSealed;
 	return count;
 }
 
@@ -2141,7 +2141,7 @@ bool Ship::Carry(const shared_ptr<Ship> &ship)
 		return false;
 	
 	for(Bay &bay : bays)
-		if((bay.isFighter == isFighter) && !bay.ship)
+		if((bay.isFighter == isFighter) && !bay.ship && !bay.isSealed)
 		{
 			bay.ship = ship;
 			ship->SetSystem(nullptr);
