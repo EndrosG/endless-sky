@@ -187,7 +187,7 @@ void Engine::Place()
 					continue;
 				// Avoid the exploit where the player can wear down an NPC's
 				// crew by attrition over the course of many days.
-				if(!ship->GetPersonality().IsDerelict() && !ship->HasAssignedCrew())
+				if(!ship->GetPersonality().IsDerelict() && ship->AssignedCrew() != -1)
 					ship->AddCrew(max(0, ship->RequiredCrew() - ship->Crew()));
 				if(!ship->IsDisabled())
 					ship->Recharge();
