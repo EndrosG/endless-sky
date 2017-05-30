@@ -1678,10 +1678,10 @@ bool AI::DoHarvesting(Ship &ship, Command &command)
 		{
 			if(ship.Cargo().Free() < it->UnitSize())
 				continue;
-			// Only pick up flotsam that is nearby and that you are facing toward.
+			// Only pick up flotsam that is nearby, you are facing toward, and that was not dropped by you or your fleet.
 			Point p = it->Position() - ship.Position();
 			double range = p.Length();
-			if(range > 800. || (range > 100. && p.Unit().Dot(ship.Facing().Unit()) < .9))
+			if(range > 800. || (range > 100. && p.Unit().Dot(ship.Facing().Unit()) < .9) || (ship.IsYours() && it->Source()->IsYours()))
 				continue;
 			
 			// Estimate how long it would take to intercept this flotsam.
